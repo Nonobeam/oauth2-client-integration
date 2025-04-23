@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: oauth2-integration-platform
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google-client:
+            client-id: ${OAUTH2_GOOGLE_CLIENT_ID:12341qwecqwer13124x132424d4ggggggav35r}
+            client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET:XON2OOAWQ_324123}
+            redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URL:http://localhost:8081}/login/oauth2/callback/google-client
+            provider: google
+            authorization-grant-type: ${OAUTH2_GOOGLE_GRANT_TYPE:authorization_code}
+            scope: ${OAUTH2_GOOGLE_SCOPE:openid}
+
+          linkedin-client:
+            client-id: ${OAUTH2_LINKEDIN_CLIENT_ID:12341qwecqwer13124x132424d4ggggggav35r}
+            client-secret: ${OAUTH2_LINKEDIN_CLIENT_SECRET:XON2OOAWQ_324123}
+            redirect-uri: ${OAUTH2_LINKEDIN_REDIRECT_URL:http://localhost:8081}/login/oauth2/callback/google-client
+            provider: linkedin
+            authorization-grant-type: ${OAUTH2_LINKEDIN_GRANT_TYPE:authorization_code}
+            scope: ${OAUTH2_LINKEDIN_SCOPE:openid}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+app:
+  cors-config:
+    allow-cors: ${UI_CORS_URLS:http://localhost:8081,http://localhost:8082,http://localhost:8083,http://localhost:5173,http://localhost:5174,http://localhost:5175}
