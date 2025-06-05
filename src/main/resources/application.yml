@@ -1,30 +1,85 @@
 spring:
   application:
     name: oauth2-integration-platform
+  messages:
+    basename: messages
+    encoding: UTF-8
+
+  datasource:
+    url: jdbc:postgresql://${ENV_DB_HOST:localhost}:${ENV_DB_PORT:5432}/${ENV_DB_NAME:matchlent}?currentSchema=${ENV_DB_SCHEMA:matchlent-db}&useUnicode=true&sslmode=disable&serverTimezone=UTC
+    username: ${ENV_DB_USERNAME:postgres}
+    password: ${ENV_DB_PASSWORD:123}
+    driver-class-name: org.postgresql.Driver
 
   security:
     oauth2:
       client:
+        provider:
+          linkedin-provider:
+            authorization-uri: https://www.linkedin.com/oauth/v2/authorization
+            token-uri: https://www.linkedin.com/oauth/v2/accessToken
+            user-info-uri: https://api.linkedin.com/v2/userinfo
+            jwk-set-uri: https://www.linkedin.com/oauth/openid/jwks
+            issuer-uri: https://www.linkedin.com/oauth
+            user-name-attribute: sub
+          github-provider:
+            authorization-uri: https://www.linkedin.com/oauth/v2/authorization
+            token-uri: https://www.linkedin.com/oauth/v2/accessToken
+            user-info-uri: https://api.linkedin.com/v2/userinfo
+            jwk-set-uri: https://www.linkedin.com/oauth/openid/jwks
+            issuer-uri: https://www.linkedin.com/oauth
+            user-name-attribute: sub
+          google-provider:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+            issuer-uri: https://accounts.google.com
+            user-name-attribute: sub
         registration:
-          google-client:
-            client-id: ${OAUTH2_GOOGLE_CLIENT_ID:12341qwecqwer13124x132424d4ggggggav35r}
-            client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET:XON2OOAWQ_324123}
-            redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URL:http://localhost:8081}/login/oauth2/callback/google-client
-            provider: google
-            authorization-grant-type: ${OAUTH2_GOOGLE_GRANT_TYPE:authorization_code}
-            scope: ${OAUTH2_GOOGLE_SCOPE:openid}
-
-          linkedin-client:
-            client-id: ${OAUTH2_LINKEDIN_CLIENT_ID:12341qwecqwer13124x132424d4ggggggav35r}
-            client-secret: ${OAUTH2_LINKEDIN_CLIENT_SECRET:XON2OOAWQ_324123}
-            redirect-uri: ${OAUTH2_LINKEDIN_REDIRECT_URL:http://localhost:8081}/login/oauth2/callback/google-client
-            provider: linkedin
-            authorization-grant-type: ${OAUTH2_LINKEDIN_GRANT_TYPE:authorization_code}
-            scope: ${OAUTH2_LINKEDIN_SCOPE:openid}
+          google:
+            provider: google-provider
+            client-id: ${ENV_GOOGLE_CLIENT_ID:}
+            client-secret: ${ENV_GOOGLE_CLIENT_SECRET:}
+            scope: ${ENV_GOOGLE_SCOPE:openid,profile,email}
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          github:
+            provider: github-provider
+            client-id: ${ENV_GITHUB_CLIENT_ID:YOUR_CLIENT_ID}
+            client-secret: ${ENV_GITHUB_CLIENT_SECRET:YOUR_CLIENT_SECRET}
+            scope: ${ENV_GITHUB_SCOPE:openid,profile,email}
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          linkedin:
+            provider: linkedin-provider
+            client-id: ${ENV_LINKEDIN_CLIENT_ID:YOUR_CLIENT_ID}
+            client-secret: ${ENV_LINKEDIN_CLIENT_SECRET:YOUR_CLIENT_SECRET}
+            client-name: LinkedIn
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+              - openid
+              - profile
+              - email
 
 server:
   port: ${SERVER_PORT:8080}
 
+security:
+  rsa:
+    public-key: ${ENV_RSA_PUBLIC_KEY:}
+    private-key: ${ENV_RSA_PRIVATE_KEY:}
+
 app:
   cors-config:
     allow-cors: ${UI_CORS_URLS:http://localhost:8081,http://localhost:8082,http://localhost:8083,http://localhost:5173,http://localhost:5174,http://localhost:5175}
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.web.client.RestTemplate: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: TRACE
+    org.springframework.web.client: TRACE
+    org.springframework.security.jackson2: INFO
